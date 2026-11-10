@@ -3,8 +3,8 @@ version: '${version}'
 main: com.thecottagestar.tpagui.CottageTPAGUI
 api-version: '26.2'
 authors: [The Cottage★]
-description: A Cottage★ inventory GUI for SimpleTPA player requests.
-softdepend: [SimpleTPA]
+description: The Cottage★ Java inventory menus and native Bedrock forms for SimpleTPA and server options.
+softdepend: [SimpleTPA, floodgate, Geyser-Spigot]
 
 commands:
   tpamenu:
@@ -12,8 +12,16 @@ commands:
     usage: /tpamenu
     aliases: [ctpa, cottagetpa]
     permission: cottagetpagui.use
+  options:
+    description: Opens The Cottage★ Bedrock server options.
+    usage: /options
+    aliases: [serveroptions]
+    permission: cottagetpagui.options
 
 permissions:
   cottagetpagui.use:
-    description: Allows opening The Cottage★ teleport GUI.
+    description: Allows opening The Cottage★ teleport menu.
+    default: true
+  cottagetpagui.options:
+    description: Allows opening The Cottage★ server options.
     default: true
