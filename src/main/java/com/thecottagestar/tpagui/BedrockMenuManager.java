@@ -43,7 +43,7 @@ final class BedrockMenuManager implements Listener {
     private static final TextColor DUSTY_ROSE = TextColor.color(0xC78F82);
     private static final TextColor TAUPE = TextColor.color(0x948979);
 
-    private static final String DISCORD_URL = "https://discord.gg/323w42BxNN";
+    private static final String DISCORD_URL = "https://the-cottage.onrender.com/";
     private static final String WEBSITE_URL = "https://the-cottage.onrender.com/";
 
     private final JavaPlugin plugin;
@@ -59,44 +59,44 @@ final class BedrockMenuManager implements Listener {
 
     private static final List<Tutorial> TUTORIALS = List.of(
             new Tutorial(
-                    "Teleport Requests",
-                    "Use /tpamenu to open the teleport menu.\n\n/tpa <player> asks to teleport to someone.\n/tpahere <player> asks someone to teleport to you.\n\nUse /tpaccept [player] to accept, /tpdeny [player] to deny, and /tpatoggle to stop or allow incoming requests. Requests expire after the server's configured timeout."
+                    "Teleport Help",
+                    "To request a teleport, use /tpa [player].\n\nTo invite someone to you, use /tpahere [player]."
             ),
             new Tutorial(
-                    "Team System",
-                    "Open your team controls with /team gui.\n\nUse the Team Ender Chest button or /team echest to access your team's shared storage. Team features and permissions are controlled by the server."
+                    "Team Guide",
+                    "Open the team menu with /team gui.\n\nCreate a team with /team create [name]. Invite someone with /team invite [player], then they can accept with /team join. Use /team info or /team list to view teams, and /tc [message] for team-only chat.\n\nOpen your team's shared storage with /team echest."
             ),
             new Tutorial(
-                    "VeinMiner",
-                    "VeinMiner can break connected supported blocks together when you mine one with a supported tool.\n\nIt only works for blocks and tools allowed by the server configuration, and server limits still apply."
+                    "Mob Guide",
+                    "With ClickMobs, sneak and interact with an eligible mob to pick it up. Place the mob-head item to release it. Some mobs may be restricted by server settings."
+            ),
+            new Tutorial(
+                    "Villager Guide",
+                    "With ClickVillagers, sneak and interact with a villager to pick it up; place its villager-head item to put it back. Sneak and interact with shears to anchor a villager, or a shovel to claim and protect it. InstaRestock handles trade restocking according to server settings."
+            ),
+            new Tutorial(
+                    "Mining Guide",
+                    "VeinMiner can mine connected supported blocks together when you mine one with an allowed tool. Supported blocks, tools, and chain limits follow the server configuration."
+            ),
+            new Tutorial(
+                    "Happy Ghast Guide",
+                    "FasterHappyGhast adjusts Happy Ghast flight speed. Ride and steer a Happy Ghast normally; its speed follows the server settings."
+            ),
+            new Tutorial(
+                    "Skin Guide",
+                    "Open /skins to browse the skin menu. Use /skin set [name] to choose a skin, /skin clear to reset it, or /skin update to refresh your current skin."
             ),
             new Tutorial(
                     "Dynamic Lights",
-                    "Hold a torch or another supported light source to illuminate the area around you. Dropped torches and other supported light sources can illuminate their surroundings too."
+                    "Hold a torch or another supported light source to illuminate the area around you. Dropped torches and other supported light sources can illuminate their surroundings too!"
             ),
             new Tutorial(
                     "Better Mending",
-                    "Hold the tool or armor piece with the Mending enchantment, then sneak and right-click to mend it. The item must have Mending."
+                    "Have a tool or piece of armor enchanted with Mending? Sneak and right-click to mend it!"
             ),
             new Tutorial(
-                    "Easy Gaps & Webs",
-                    "Golden Apples: use an apple with four gold ingots in the plugin's recipe.\n\nCobwebs: arrange strings in an X pattern in the crafting grid.\n\nThese are the server's simplified crafting recipes."
-            ),
-            new Tutorial(
-                    "Happy Ghasts",
-                    "Happy Ghast flight speed is adjusted by the server's FasterHappyGhast plugin. Mount and steer a Happy Ghast normally; its flight speed follows the server configuration."
-            ),
-            new Tutorial(
-                    "Skins",
-                    "Use /skins to open the skin menu. SkinsRestorer lets you browse and apply supported Minecraft skins. Skin availability and refresh timing can depend on the skin service."
-            ),
-            new Tutorial(
-                    "Mob Handling",
-                    "ClickMobs supports picking up eligible mobs with the configured sneak-and-interact action, then placing them back using the carried mob item. Not every mob is necessarily supported; follow any in-game restrictions."
-            ),
-            new Tutorial(
-                    "Villager Trading",
-                    "InstaRestock adjusts villager trade restocking on the server. Trade availability still follows the server's configuration. Ask staff before moving or claiming villagers whose ownership is unclear."
+                    "Easy Crafting",
+                    "Golden Apples: place an apple with four gold ingots around it. Cobwebs: arrange strings in an X pattern in the crafting grid. No complicated recipes needed!"
             )
     );
 
@@ -124,24 +124,52 @@ final class BedrockMenuManager implements Listener {
                 .title("The Cottage★ | Server Options")
                 .content("Chapter 1 · Season 6\nWelcome to the backyard. Choose an option below.")
                 .button("Spawn")
+                .button("Menu")
                 .button("Wanderer's Way")
                 .button("Teleport Menu")
+                .button("Custom Destinations")
                 .button("Player Tutorials")
                 .button("Team System")
                 .button("Team Ender Chest")
+                .button("Skin Support")
                 .button("Discord")
                 .button("Website")
                 .button("Close")
                 .validResultHandler(response -> runForPlayer(player.getUniqueId(), online -> {
                     switch (response.clickedButtonId()) {
                         case 0 -> teleportToSpawn(online);
-                        case 1 -> runPlayerCommand(online, "rtp");
-                        case 2 -> openTeleportMenu(online);
-                        case 3 -> openTutorialMenu(online);
-                        case 4 -> runPlayerCommand(online, "team gui");
-                        case 5 -> runPlayerCommand(online, "team echest");
-                        case 6 -> showLink(online, "The Cottage★ Discord", DISCORD_URL);
-                        case 7 -> showLink(online, "The Cottage★ Website", WEBSITE_URL);
+                        case 1 -> runPlayerCommand(online, "menu");
+                        case 2 -> runPlayerCommand(online, "rtp");
+                        case 3 -> openTeleportMenu(online);
+                        case 4 -> openDestinationMenu(online);
+                        case 5 -> openTutorialMenu(online);
+                        case 6 -> runPlayerCommand(online, "team gui");
+                        case 7 -> runPlayerCommand(online, "team echest");
+                        case 8 -> runPlayerCommand(online, "skins");
+                        case 9 -> showLink(online, "The Cottage★ Discord", DISCORD_URL);
+                        case 10 -> showLink(online, "The Cottage★ Website", WEBSITE_URL);
+                        default -> { }
+                    }
+                }))
+                .build();
+
+        sendForm(player, form);
+    }
+
+    private void openDestinationMenu(Player player) {
+        SimpleForm form = SimpleForm.builder()
+                .title("The Cottage★ | Custom Destinations")
+                .content("Choose a place to visit.")
+                .button("Broken Holy Sword")
+                .button("Public Trading Hall")
+                .button("Jade Chamber")
+                .button("Back to Server Options")
+                .validResultHandler(response -> runForPlayer(player.getUniqueId(), online -> {
+                    switch (response.clickedButtonId()) {
+                        case 0 -> teleportToDestination(online, "Broken Holy Sword", -62.50, 64.00, -5.42, 629.60f, -26.17f);
+                        case 1 -> teleportToDestination(online, "Public Trading Hall", -204.51, 69.00, -39.42, 538.85f, -1.15f);
+                        case 2 -> teleportToDestination(online, "Jade Chamber", 141.54, 176.00, 96.55, 269.86f, -6.40f);
+                        case 3 -> openServerOptions(online);
                         default -> { }
                     }
                 }))
@@ -350,6 +378,21 @@ final class BedrockMenuManager implements Listener {
             tell(player, "You have returned to The Cottage★ spawn.", SAGE);
         } else {
             tell(player, "The server could not teleport you to spawn.", DUSTY_ROSE);
+        }
+    }
+
+    private void teleportToDestination(Player player, String destination, double x, double y, double z, float yaw, float pitch) {
+        World world = Bukkit.getWorld("world");
+        if (world == null) {
+            tell(player, "The Overworld is not currently available.", DUSTY_ROSE);
+            return;
+        }
+
+        Location location = new Location(world, x, y, z, yaw, pitch);
+        if (player.teleport(location)) {
+            tell(player, "You have arrived at " + destination + ".", SAGE);
+        } else {
+            tell(player, "The server could not teleport you to " + destination + ".", DUSTY_ROSE);
         }
     }
 
