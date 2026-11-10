@@ -1,0 +1,19 @@
+name: CottageTPAGUI
+version: '${version}'
+main: com.thecottagestar.tpagui.CottageTPAGUI
+api-version: '26.2'
+authors: [The Cottage★]
+description: A Cottage★ inventory GUI for SimpleTPA player requests.
+softdepend: [SimpleTPA]
+
+commands:
+  tpamenu:
+    description: Opens The Cottage★ teleport menu.
+    usage: /tpamenu
+    aliases: [ctpa, cottagetpa]
+    permission: cottagetpagui.use
+
+permissions:
+  cottagetpagui.use:
+    description: Allows opening The Cottage★ teleport GUI.
+    default: true
