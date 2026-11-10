@@ -33,7 +33,6 @@ public final class CottageTPAGUI extends JavaPlugin implements Listener, Command
 
     // The Cottage★ palette.
     private static final TextColor SAGE = TextColor.color(0x7F936F);
-    private static final TextColor DEEP_SAGE = TextColor.color(0x55644A);
     private static final TextColor GOLD = TextColor.color(0xC9A968);
     private static final TextColor CREAM = TextColor.color(0xFFFBF3);
     private static final TextColor DUSTY_ROSE = TextColor.color(0xC78F82);
@@ -41,6 +40,7 @@ public final class CottageTPAGUI extends JavaPlugin implements Listener, Command
 
     private NamespacedKey actionKey;
     private NamespacedKey targetKey;
+    private BedrockMenuManager bedrockMenus;
 
     @Override
     public void onEnable() {
@@ -48,31 +48,66 @@ public final class CottageTPAGUI extends JavaPlugin implements Listener, Command
         targetKey = new NamespacedKey(this, "target-uuid");
 
         getServer().getPluginManager().registerEvents(this, this);
-        if (getCommand("tpamenu") == null) {
-            getLogger().severe("Command 'tpamenu' is missing from plugin.yml; disabling plugin.");
+
+        if (getCommand("tpamenu") == null || getCommand("options") == null) {
+            getLogger().severe("A required command is missing from plugin.yml; disabling plugin.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
         getCommand("tpamenu").setExecutor(this);
+        getCommand("options").setExecutor(this);
+
+        Plugin floodgate = getServer().getPluginManager().getPlugin("floodgate");
+        if (floodgate != null && floodgate.isEnabled()) {
+            try {
+                bedrockMenus = new BedrockMenuManager(this);
+                getLogger().info("Floodgate detected. Native Bedrock Server Options are enabled.");
+            } catch (LinkageError | RuntimeException exception) {
+                getLogger().log(java.util.logging.Level.SEVERE,
+                        "Could not initialize Bedrock forms. Java menus remain available.", exception);
+            }
+        } else {
+            getLogger().warning("Floodgate was not detected. Java menus will work, but Bedrock forms and the compass shortcut are unavailable.");
+        }
 
         Plugin simpleTpa = getServer().getPluginManager().getPlugin("SimpleTPA");
         if (simpleTpa == null || !simpleTpa.isEnabled()) {
-            getLogger().warning("SimpleTPA was not detected by its plugin name. The GUI can open, but requests require SimpleTPA to be installed and enabled.");
+            getLogger().warning("SimpleTPA was not detected by its plugin name. Teleport requests require SimpleTPA to be installed and enabled.");
         }
-        getLogger().info("CottageTPAGUI enabled. Open the menu with /tpamenu.");
+        getLogger().info("CottageTPAGUI enabled. Use /tpamenu for teleport requests and /options for server options.");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("This menu can only be opened in-game.");
+            sender.sendMessage("These menus can only be opened in-game.");
             return true;
         }
+
+        String commandName = command.getName().toLowerCase(java.util.Locale.ROOT);
+        if ("options".equals(commandName)) {
+            if (!player.hasPermission("cottagetpagui.options")) {
+                send(player, "You do not have permission to open Server Options★.", DUSTY_ROSE);
+                return true;
+            }
+            if (bedrockMenus != null && bedrockMenus.isBedrockPlayer(player)) {
+                bedrockMenus.openServerOptions(player);
+            } else {
+                send(player, "Open Server Options★ from your Java pause menu.", TAUPE);
+            }
+            return true;
+        }
+
         if (!player.hasPermission("cottagetpagui.use")) {
-            send(player, "You do not have permission to open this menu.", DUSTY_ROSE);
+            send(player, "You do not have permission to open the teleport menu.", DUSTY_ROSE);
             return true;
         }
-        openMainMenu(player);
+
+        if (bedrockMenus != null && bedrockMenus.isBedrockPlayer(player)) {
+            bedrockMenus.openTeleportMenu(player);
+        } else {
+            openMainMenu(player);
+        }
         return true;
     }
 
@@ -156,7 +191,6 @@ public final class CottageTPAGUI extends JavaPlugin implements Listener, Command
             ));
         }
 
-        // Footer controls: previous | back | page | refresh | next.
         inventory.setItem(45, button(
                 page > 0 ? Material.ARROW : Material.GRAY_STAINED_GLASS_PANE,
                 Component.text("Previous Page", page > 0 ? CREAM : TAUPE),
@@ -197,10 +231,7 @@ public final class CottageTPAGUI extends JavaPlugin implements Listener, Command
         meta.setOwningPlayer(target);
         meta.displayName(Component.text(target.getName(), CREAM).decorate(TextDecoration.BOLD));
         String actionLabel = mode == MenuHolder.RequestMode.TPA ? "Send teleport request" : "Invite them to your location";
-        meta.lore(List.of(
-                line(actionLabel, SAGE),
-                line("Click to select this player.", TAUPE)
-        ));
+        meta.lore(List.of(line(actionLabel, SAGE), line("Click to select this player.", TAUPE)));
         meta.getPersistentDataContainer().set(actionKey, PersistentDataType.STRING, "select-player");
         meta.getPersistentDataContainer().set(targetKey, PersistentDataType.STRING, target.getUniqueId().toString());
         item.setItemMeta(meta);
@@ -245,9 +276,7 @@ public final class CottageTPAGUI extends JavaPlugin implements Listener, Command
             case "refresh" -> openPlayerList(player, holder.requestMode(), holder.page());
             case "back" -> openMainMenu(player);
             case "close" -> player.closeInventory();
-            default -> {
-                // Unknown or decorative menu actions are intentionally ignored.
-            }
+            default -> { }
         }
     }
 
@@ -301,8 +330,6 @@ public final class CottageTPAGUI extends JavaPlugin implements Listener, Command
             return;
         }
 
-        // Execute as the clicking player so SimpleTPA retains its normal permission,
-        // cooldown, request-expiry, and request-toggle checks.
         sender.closeInventory();
         boolean dispatched = sender.performCommand(command);
         if (!dispatched) {
@@ -314,27 +341,19 @@ public final class CottageTPAGUI extends JavaPlugin implements Listener, Command
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         meta.displayName(name);
-        if (lore != null && !lore.isEmpty()) {
-            meta.lore(lore);
-        }
-        if (action != null) {
-            meta.getPersistentDataContainer().set(actionKey, PersistentDataType.STRING, action);
-        }
+        if (lore != null && !lore.isEmpty()) meta.lore(lore);
+        if (action != null) meta.getPersistentDataContainer().set(actionKey, PersistentDataType.STRING, action);
         item.setItemMeta(meta);
         return item;
     }
 
     private void fill(Inventory inventory, Material material) {
         ItemStack filler = button(material, Component.text(" ", NamedTextColor.WHITE), List.of(), null);
-        for (int slot = 0; slot < inventory.getSize(); slot++) {
-            inventory.setItem(slot, filler.clone());
-        }
+        for (int slot = 0; slot < inventory.getSize(); slot++) inventory.setItem(slot, filler.clone());
     }
 
     private String readTag(ItemStack item, NamespacedKey key) {
-        if (!item.hasItemMeta()) {
-            return null;
-        }
+        if (item == null || !item.hasItemMeta()) return null;
         return item.getItemMeta().getPersistentDataContainer().get(key, PersistentDataType.STRING);
     }
 
