@@ -1,44 +1,66 @@
 # CottageTPAGUI
 
-A small Paper plugin that adds a Cottage★ inventory GUI on top of the existing SimpleTPA plugin.
+A Paper 26.2 plugin for The Cottage★ SMP. It adds a Java inventory GUI for SimpleTPA and native Bedrock forms for server options, tutorials, and player-to-player teleport requests.
 
 ## Player experience
 
+### Java Edition
+
 - `/tpamenu` opens the Cottage★ Teleport Menu.
-- **Teleport to Player** opens a paginated list of currently online players and sends `/tpa <player>` when a head is selected.
-- **Invite Player** opens the same kind of list and sends `/tpahere <player>` when a head is selected.
-- The player list excludes the person using the menu, sorts names alphabetically, displays player heads, and supports refresh and pagination.
-- A selected target is checked again before the request is sent. If they have left, the list refreshes instead.
-- `/ctpa` and `/cottagetpa` are aliases for `/tpamenu`.
+- Teleport-to-player and invite-player actions show online player heads.
+- The Java player picker excludes the person using the menu, sorts names alphabetically, and includes refresh and pagination.
+- Add `/tpamenu` to FoPauseMenu to expose the GUI from the Java pause menu.
+
+### Bedrock Edition
+
+Requires Geyser and Floodgate to be installed and enabled.
+
+- `/options` opens the native Bedrock Server Options form.
+- `/serveroptions` is an alias for `/options`.
+- A **Server Options★** compass is placed in the first empty hotbar slot when a Bedrock player joins. It is never placed over an existing item.
+- Right-clicking the compass opens Server Options★.
+- If the hotbar is full, players can still use `/options`.
+- `/tpamenu` opens the Bedrock-native teleport menu.
+- Bedrock teleport selection displays online player names as form buttons, with pagination, refresh, and a back action.
+- The tutorial submenu includes SimpleTPA, UltimateTeams, VeinMiner, DynamicLights, BetterMending, Easy Gaps & Webs, FasterHappyGhast, SkinsRestorer, ClickMobs, and villager-trading guidance.
+- Discord and website links are shown in a form and sent to chat as clickable links.
+
+Bedrock forms use Floodgate's Cumulus API. The API is a compile-only dependency: this plugin does not bundle or replace Geyser, Floodgate, or Cumulus.
 
 ## Compatibility and design
 
-- Built for the Paper 26.2 API and Java 25.
-- Uses only Bukkit/Paper inventory APIs; it does not depend on SimpleTPA's internal classes.
-- Runs the existing SimpleTPA command as the player who clicked the target. It does not dispatch as console or bypass permissions.
-- Checks SimpleTPA's documented player permissions: `tpa.command.tpa` and `tpa.command.tpahere`.
-- SimpleTPA remains responsible for cooldowns, request timeouts, incoming-request toggles, and the actual teleport request lifecycle.
-- Standard inventory interactions are used, which are compatible with normal Geyser inventory interaction. Player-head skin display depends on the player's skin being available to the server/client.
+- Built for Java 25 and Paper 26.2.
+- Floodgate API is used to identify Bedrock players and send Cumulus forms.
+- Floodgate is a soft dependency: Java inventory menus continue to work when Floodgate is not installed, but Bedrock forms and the compass are unavailable.
+- The plugin executes existing SimpleTPA commands as the player who selected the target. It does not dispatch teleport requests as console or bypass SimpleTPA's permission checks.
+- SimpleTPA remains responsible for cooldowns, request timeouts, incoming-request toggles, and request lifecycle.
+- Team actions execute `/team gui` and `/team echest` as the player.
+- The Bedrock spawn action teleports the player to the configured Cottage★ Overworld spawn coordinates: `-49.50 70.50 72.53`, yaw `-269.80`, pitch `-33.56`.
+- The compass shortcut does not overwrite an item. If all nine hotbar slots are occupied, `/options` remains available.
 
 ## Build
 
 Requires JDK 25 and Gradle. From this folder run:
 
 ```bash
-gradle build
+gradle clean build
 ```
 
-The plugin JAR will be created at `build/libs/CottageTPAGUI-1.0.0.jar`.
+The plugin JAR is created at `build/libs/CottageTPAGUI-1.1.0.jar`.
 
-A GitHub Actions workflow is included to build the JAR with JDK 25 and upload it as an artifact.
+A GitHub Actions workflow builds with JDK 25 and uploads the plugin JAR as an artifact.
 
 ## Install
 
-1. Make sure SimpleTPA is installed and enabled.
-2. Place `CottageTPAGUI-1.0.0.jar` in the server's `plugins/` folder.
-3. Fully restart the Paper server.
-4. In game, run `/tpamenu`.
-5. To add it to FoPauseMenu, add an action like this to `plugins/FoPauseMenu/config.yml` (choose an unused action ID and order):
+1. Keep Paper 26.2 and Java 25 as the server runtime.
+2. Make sure SimpleTPA is installed and enabled.
+3. For Bedrock forms, make sure Geyser and Floodgate are installed and enabled. Use versions compatible with the Floodgate 2.2.5 API/Cumulus forms API used to compile this release.
+4. Place `CottageTPAGUI-1.1.0.jar` in the server's `plugins/` folder.
+5. Fully restart the Paper server; do not use `/reload`.
+6. Test Java with `/tpamenu`.
+7. Test Bedrock with `/options`, then check that the Server Options★ compass is added on join.
+
+To add the Java teleport GUI to `plugins/FoPauseMenu/config.yml`, use an unused action ID and order:
 
 ```yaml
   cottage-tpa:
@@ -46,20 +68,21 @@ A GitHub Actions workflow is included to build the JAR with JDK 25 and upload it
     type: player-command
     command: "/tpamenu"
     label: "Teleport Menu"
-    tooltip: "{white}Open The Cottage★ teleport menu."
+    tooltip: "{white}Send a teleport request or invite someone to you."
     width: 98
-    order: 9
+    order: 4
     permission: ''
 ```
 
-No changes to the SimpleTPA config are required.
+No changes to the SimpleTPA configuration are required.
 
 ## Permissions
 
 | Permission | Default | Purpose |
 |---|---:|---|
-| `cottagetpagui.use` | true | Open the GUI |
+| `cottagetpagui.use` | true | Open the teleport GUI |
+| `cottagetpagui.options` | true | Open Bedrock Server Options |
 | `tpa.command.tpa` | Provided by SimpleTPA | Send a normal TPA request |
 | `tpa.command.tpahere` | Provided by SimpleTPA | Send a TPA-here request |
 
-The GUI checks SimpleTPA's permission before showing each action and checks again when a player is selected.
+The plugin checks SimpleTPA's permissions before presenting request actions and checks again when a player is selected.
