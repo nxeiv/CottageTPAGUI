@@ -22,10 +22,10 @@ Requires Geyser and Floodgate to be installed and enabled.
 - If the hotbar is full, players can still use `/options`.
 - `/tpamenu` opens the Bedrock-native teleport menu.
 - Bedrock teleport selection displays online player names as form buttons, with pagination, refresh, and a back action.
-- The tutorial submenu includes SimpleTPA, UltimateTeams, VeinMiner, DynamicLights, BetterMending, Easy Gaps & Webs, FasterHappyGhast, SkinsRestorer, ClickMobs, and villager-trading guidance.
-- The Server Options form includes Spawn, `/menu`, Wanderer's Way (`/rtp`), Teleport Menu, Custom Destinations, Player Tutorials, Team System (`/team gui`), Team Ender Chest (`/team echest`), Skin Support (`/skins`), Discord, and Website.
-- Custom Destinations includes Broken Holy Sword, Public Trading Hall, and Jade Chamber, using the same Overworld coordinates and rotations as the Java FoPauseMenu actions.
-- The Store action is intentionally omitted because it is disabled in the supplied Java configuration.
+- Player Tutorials are ordered like the Java help actions: Teleport Help, Team Guide, Mob Guide, Villager Guide, Mining Guide, Happy Ghast Guide, Skin Guide, Dynamic Lights, Better Mending, and Easy Crafting.
+- The Server Options form follows the same order as Java: travel and teleport actions first (Spawn, Wanderer's Way, Teleport Menu, Broken Holy Sword, Public Trading Hall, Jade Chamber), plugin shortcuts next (Team System, Team Ender Chest, Skin Support), then Player Tutorials, followed by community links.
+- The three custom destinations use the same Overworld coordinates and rotations as the Java FoPauseMenu actions.
+- Disabled or unavailable Java actions such as `/menu` and Store are not shown in the Bedrock menu.
 - Discord and website links are shown in a form and sent to chat as clickable links. The Discord action intentionally uses the same website URL as the supplied Java configuration.
 
 Bedrock forms use Floodgate's Cumulus API. The API is a compile-only dependency: this plugin does not bundle or replace Geyser, Floodgate, or Cumulus.
@@ -49,7 +49,7 @@ Requires JDK 25 and Gradle. From this folder run:
 gradle clean build
 ```
 
-The plugin JAR is created at `build/libs/CottageTPAGUI-1.2.0.jar`.
+The plugin JAR is created at `build/libs/CottageTPAGUI-1.3.0.jar`.
 
 A GitHub Actions workflow builds with JDK 25 and uploads the plugin JAR as an artifact.
 
@@ -58,7 +58,7 @@ A GitHub Actions workflow builds with JDK 25 and uploads the plugin JAR as an ar
 1. Keep Paper 26.2 and Java 25 as the server runtime.
 2. Make sure SimpleTPA is installed and enabled.
 3. For Bedrock forms, make sure Geyser and Floodgate are installed and enabled. Use versions compatible with the Floodgate 2.2.5 API/Cumulus forms API used to compile this release.
-4. Place `CottageTPAGUI-1.2.0.jar` in the server's `plugins/` folder.
+4. Place `CottageTPAGUI-1.3.0.jar` in the server's `plugins/` folder.
 5. Fully restart the Paper server; do not use `/reload`.
 6. Test Java with `/tpamenu`.
 7. Test Bedrock with `/options`, then check that the Server Options★ compass is added on join.
