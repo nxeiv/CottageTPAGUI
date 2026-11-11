@@ -122,54 +122,38 @@ final class BedrockMenuManager implements Listener {
 
         SimpleForm form = SimpleForm.builder()
                 .title("The Cottage★ | Server Options")
-                .content("Chapter 1 · Season 6\nWelcome to the backyard. Choose an option below.")
+                .content("Chapter 1 · Season 6\nTravel and teleport options come first, followed by plugin shortcuts and player guides. Community links are at the bottom.")
+                // TRAVEL & TELEPORTS
                 .button("Spawn")
-                .button("Menu")
                 .button("Wanderer's Way")
                 .button("Teleport Menu")
-                .button("Custom Destinations")
-                .button("Player Tutorials")
+                .button("Broken Holy Sword")
+                .button("Public Trading Hall")
+                .button("Jade Chamber")
+                // PLUGIN SHORTCUTS
                 .button("Team System")
                 .button("Team Ender Chest")
                 .button("Skin Support")
+                // PLAYER GUIDES & HELP
+                .button("Player Tutorials")
+                // COMMUNITY LINKS
                 .button("Discord")
                 .button("Website")
                 .button("Close")
                 .validResultHandler(response -> runForPlayer(player.getUniqueId(), online -> {
                     switch (response.clickedButtonId()) {
                         case 0 -> teleportToSpawn(online);
-                        case 1 -> runPlayerCommand(online, "menu");
-                        case 2 -> runPlayerCommand(online, "rtp");
-                        case 3 -> openTeleportMenu(online);
-                        case 4 -> openDestinationMenu(online);
-                        case 5 -> openTutorialMenu(online);
+                        case 1 -> runPlayerCommand(online, "rtp");
+                        case 2 -> openTeleportMenu(online);
+                        case 3 -> teleportToDestination(online, "Broken Holy Sword", -62.50, 64.00, -5.42, 629.60f, -26.17f);
+                        case 4 -> teleportToDestination(online, "Public Trading Hall", -204.51, 69.00, -39.42, 538.85f, -1.15f);
+                        case 5 -> teleportToDestination(online, "Jade Chamber", 141.54, 176.00, 96.55, 269.86f, -6.40f);
                         case 6 -> runPlayerCommand(online, "team gui");
                         case 7 -> runPlayerCommand(online, "team echest");
                         case 8 -> runPlayerCommand(online, "skins");
-                        case 9 -> showLink(online, "The Cottage★ Discord", DISCORD_URL);
-                        case 10 -> showLink(online, "The Cottage★ Website", WEBSITE_URL);
-                        default -> { }
-                    }
-                }))
-                .build();
-
-        sendForm(player, form);
-    }
-
-    private void openDestinationMenu(Player player) {
-        SimpleForm form = SimpleForm.builder()
-                .title("The Cottage★ | Custom Destinations")
-                .content("Choose a place to visit.")
-                .button("Broken Holy Sword")
-                .button("Public Trading Hall")
-                .button("Jade Chamber")
-                .button("Back to Server Options")
-                .validResultHandler(response -> runForPlayer(player.getUniqueId(), online -> {
-                    switch (response.clickedButtonId()) {
-                        case 0 -> teleportToDestination(online, "Broken Holy Sword", -62.50, 64.00, -5.42, 629.60f, -26.17f);
-                        case 1 -> teleportToDestination(online, "Public Trading Hall", -204.51, 69.00, -39.42, 538.85f, -1.15f);
-                        case 2 -> teleportToDestination(online, "Jade Chamber", 141.54, 176.00, 96.55, 269.86f, -6.40f);
-                        case 3 -> openServerOptions(online);
+                        case 9 -> openTutorialMenu(online);
+                        case 10 -> showLink(online, "The Cottage★ Discord", DISCORD_URL);
+                        case 11 -> showLink(online, "The Cottage★ Website", WEBSITE_URL);
                         default -> { }
                     }
                 }))
