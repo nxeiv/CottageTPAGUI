@@ -1,7 +1,7 @@
 name: CottageTPAGUI
 version: '${version}'
 main: com.thecottagestar.tpagui.CottageTPAGUI
-api-version: '26.2'
+api-version: '26.3'
 authors: [The Cottage★]
 description: The Cottage★ Java inventory menus and native Bedrock forms for SimpleTPA and server options.
 softdepend: [SimpleTPA, floodgate, Geyser-Spigot]
