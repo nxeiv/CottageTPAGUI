@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.thecottagestar"
-version = "1.3.0"
+version = "1.4.0"
 
 repositories {
     mavenCentral()
@@ -13,8 +13,8 @@ repositories {
 }
 
 dependencies {
-    // Paper 26.2 is the target server line. Paper provides this API at runtime.
-    compileOnly("io.papermc.paper:paper-api:26.2.build.+")
+    // Paper 26.3 is the target server line. Paper provides this API at runtime.
+    compileOnly("io.papermc.paper:paper-api:26.3.build.+")
     // Floodgate provides Bedrock detection and the Cumulus Forms API at runtime.
     compileOnly("org.geysermc.floodgate:api:2.2.5-SNAPSHOT")
 }
