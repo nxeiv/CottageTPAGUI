@@ -1,4 +1,4 @@
-name: Build CottageTPAGUI
+name: Build CottageTPAGUI (Paper 26.3)
 
 on:
   push:
