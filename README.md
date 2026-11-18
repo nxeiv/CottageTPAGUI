@@ -1,6 +1,6 @@
 # CottageTPAGUI
 
-A Paper 26.2 plugin for The Cottage★ SMP. It adds a Java inventory GUI for SimpleTPA and native Bedrock forms for server options, tutorials, custom destinations, and player-to-player teleport requests.
+A Paper 26.3 plugin for The Cottage★ SMP. It adds a Java inventory GUI for SimpleTPA and native Bedrock forms for server options, tutorials, custom destinations, and player-to-player teleport requests.
 
 ## Player experience
 
@@ -32,7 +32,7 @@ Bedrock forms use Floodgate's Cumulus API. The API is a compile-only dependency:
 
 ## Compatibility and design
 
-- Built for Java 25 and Paper 26.2.
+- Built for Java 25 and Paper 26.3.
 - Floodgate API is used to identify Bedrock players and send Cumulus forms.
 - Floodgate is a soft dependency: Java inventory menus continue to work when Floodgate is not installed, but Bedrock forms and the compass are unavailable.
 - The plugin executes existing SimpleTPA commands as the player who selected the target. It does not dispatch teleport requests as console or bypass SimpleTPA's permission checks.
@@ -49,16 +49,16 @@ Requires JDK 25 and Gradle. From this folder run:
 gradle clean build
 ```
 
-The plugin JAR is created at `build/libs/CottageTPAGUI-1.3.0.jar`.
+The plugin JAR is created at `build/libs/CottageTPAGUI-1.4.0.jar`.
 
 A GitHub Actions workflow builds with JDK 25 and uploads the plugin JAR as an artifact.
 
 ## Install
 
-1. Keep Paper 26.2 and Java 25 as the server runtime.
+1. Keep Paper 26.3 and Java 25 as the server runtime.
 2. Make sure SimpleTPA is installed and enabled.
 3. For Bedrock forms, make sure Geyser and Floodgate are installed and enabled. Use versions compatible with the Floodgate 2.2.5 API/Cumulus forms API used to compile this release.
-4. Place `CottageTPAGUI-1.3.0.jar` in the server's `plugins/` folder.
+4. Place `CottageTPAGUI-1.4.0.jar` in the server's `plugins/` folder.
 5. Fully restart the Paper server; do not use `/reload`.
 6. Test Java with `/tpamenu`.
 7. Test Bedrock with `/options`, then check that the Server Options★ compass is added on join.
